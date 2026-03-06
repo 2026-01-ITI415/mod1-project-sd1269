@@ -7,9 +7,6 @@ public class Basket : MonoBehaviour {
     [Header("Set Dynamically")]
     public Text scoreGT;
 
-    [Header("Explosion Effect")]
-    public ParticleSystem bigExplosionEffect;
-
     void Start() {
         GameObject scoreGO = GameObject.Find("ScoreCounter");
         scoreGT = scoreGO.GetComponent<Text>();
@@ -22,23 +19,21 @@ public class Basket : MonoBehaviour {
 
         Vector3 mousePos3D = Camera.main.ScreenToWorldPoint(mousePos2D);
 
-        Vector3 pos = this.transform.position;
+        Vector3 pos = transform.position;
         pos.x = mousePos3D.x;
-        this.transform.position = pos;
+        transform.position = pos;
     }
 
     void OnCollisionEnter(Collision coll) {
         GameObject collidedWith = coll.gameObject;
+        Apple appleScript = collidedWith.GetComponent<Apple>();
 
         if (collidedWith.CompareTag("Apple")) {
-            if (bigExplosionEffect != null) {
-                ContactPoint contact = coll.contacts[0];
-                bigExplosionEffect.transform.position = contact.point;
-                bigExplosionEffect.Stop();
-                bigExplosionEffect.Play();
+            if (appleScript != null) {
+                appleScript.Explode();
+            } else {
+                Destroy(collidedWith);
             }
-
-            Destroy(collidedWith);
 
             int score = int.Parse(scoreGT.text);
             score += 100;
@@ -47,9 +42,16 @@ public class Basket : MonoBehaviour {
             if (score > HighScore.score) {
                 HighScore.score = score;
             }
-        } else if (collidedWith.CompareTag("castle"))
-        {
-            
+        } else if (collidedWith.CompareTag("Castle")) {
+            if (appleScript != null) {
+                appleScript.ExplodeCastle();
+            } else {
+                Destroy(collidedWith);
+            }
+
+            int score = int.Parse(scoreGT.text);
+            score -= 50;
+            scoreGT.text = score.ToString();
         }
     }
 }
