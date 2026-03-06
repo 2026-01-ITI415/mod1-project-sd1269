@@ -33,8 +33,6 @@ public class Apple : MonoBehaviour
     {
         if (hasExploded) return;
 
-        Debug.Log("Apple hit: " + collision.gameObject.name + " | tag: " + collision.gameObject.tag);
-
         GameObject hitObject = collision.gameObject;
 
         if (hitObject.CompareTag("Castle") || hitObject.transform.root.CompareTag("Castle"))
@@ -42,15 +40,18 @@ public class Apple : MonoBehaviour
             hasExploded = true;
             ExplodeCastle();
         }
+    }
 
-        if (hitObject.CompareTag("Finish"))
+
+// If bombs reach the goal, skill issue you insta-lose
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Goal"))
         {
             Explode();
-            Destroy(gameObject);
             ApplePicker apScript = Camera.main.GetComponent<ApplePicker>();
-            apScript.AppleDestroyed();
+            apScript.GameOver();
         }
-
     }
 
     public void Explode()
@@ -59,7 +60,6 @@ public class Apple : MonoBehaviour
         hasExploded = true;
 
         SpawnExplosionEffect();
-        ApplyExplosionForce();
         Destroy(gameObject);
     }
 
