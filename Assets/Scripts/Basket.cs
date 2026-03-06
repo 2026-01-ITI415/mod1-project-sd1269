@@ -35,7 +35,9 @@ public class Basket : MonoBehaviour {
     void OnCollisionEnter( Collision coll ) {                         // a
         // Find out what hit this basket
         GameObject collidedWith = coll.gameObject;                    // b
-        if ( collidedWith.tag == "Apple" ) {                           
+        if ( collidedWith.tag == "Apple" ) {
+            ParticleSystem ps = GameObject.Find("BigExplosionEffect").GetComponent<ParticleSystem>();
+            ps.Play();                           
             Destroy( collidedWith );                                        
 
             // Parse the text of the scoreGT into an int
