@@ -1,57 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;     // This line enables use of uGUI features.        // a
+using UnityEngine.UI;
 
 public class Basket : MonoBehaviour {
     [Header("Set Dynamically")]
-    public Text           scoreGT;                                          // a
+    public Text scoreGT;
+
+    [Header("Explosion Effect")]
+    public ParticleSystem bigExplosionEffect;
 
     void Start() {
-        // Find a reference to the ScoreCounter GameObject
-        GameObject scoreGO = GameObject.Find("ScoreCounter");               // b
-        // Get the Text Component of that GameObject
-        scoreGT = scoreGO.GetComponent<Text>();                             // c
-        // Set the starting number of points to 0
+        GameObject scoreGO = GameObject.Find("ScoreCounter");
+        scoreGT = scoreGO.GetComponent<Text>();
         scoreGT.text = "0";
     }
 
-    void Update () {
-        // Get the current screen position of the mouse from Input
-        Vector3 mousePos2D = Input.mousePosition;                             // a
+    void Update() {
+        Vector3 mousePos2D = Input.mousePosition;
+        mousePos2D.z = -Camera.main.transform.position.z;
 
-        // The Camera's z position sets how far to push the mouse into 3D
-        mousePos2D.z = -Camera.main.transform.position.z;                     // b
+        Vector3 mousePos3D = Camera.main.ScreenToWorldPoint(mousePos2D);
 
-        // Convert the point from 2D screen space into 3D game world space
-        Vector3 mousePos3D = Camera.main.ScreenToWorldPoint( mousePos2D );    // c
-
-        // Move the x position of this Basket to the x position of the Mouse
         Vector3 pos = this.transform.position;
         pos.x = mousePos3D.x;
         this.transform.position = pos;
     }
 
-    void OnCollisionEnter( Collision coll ) {                         // a
-        // Find out what hit this basket
-        GameObject collidedWith = coll.gameObject;                    // b
-        if ( collidedWith.tag == "Apple" ) {
-            ParticleSystem ps = GameObject.Find("BigExplosionEffect").GetComponent<ParticleSystem>();
-            ps.Play();                           
-            Destroy( collidedWith );                                        
+    void OnCollisionEnter(Collision coll) {
+        GameObject collidedWith = coll.gameObject;
 
-            // Parse the text of the scoreGT into an int
-            int score = int.Parse( scoreGT.text );                          // d
-            // Add points for catching the apple
+        if (collidedWith.CompareTag("Apple")) {
+            if (bigExplosionEffect != null) {
+                ContactPoint contact = coll.contacts[0];
+                bigExplosionEffect.transform.position = contact.point;
+                bigExplosionEffect.Stop();
+                bigExplosionEffect.Play();
+            }
+
+            Destroy(collidedWith);
+
+            int score = int.Parse(scoreGT.text);
             score += 100;
-            // Convert the score back to a string and display it
             scoreGT.text = score.ToString();
 
-            // Track the high score
             if (score > HighScore.score) {
                 HighScore.score = score;
             }
-
+        } else if (collidedWith.CompareTag("castle"))
+        {
+            
         }
     }
 }

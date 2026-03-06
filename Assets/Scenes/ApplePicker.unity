@@ -597,8 +597,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ApplePicker
   basketPrefab: {fileID: 8748679051486450381, guid: 9f6ca0b66ebbac34fb22e25c7ed859ec, type: 3}
   numBaskets: 3
-  basketBottomY: -14
-  basketSpacingY: 2
+  basketBottomY: -7
+  basketSpacingY: 1
   basketList: []
 --- !u!1 &1165922194
 GameObject:
